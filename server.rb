@@ -22,13 +22,20 @@ thr = Thread.new do
 	end
 end
 
+threads = []
+2.times do |n|
+	threads << Thread.new do
+		p "Waiting for client #{n}."
+		client = server.accept
 
-p "Waiting for client."
-client = server.accept
+		p "Connected #{n}."
+		loop do
+			c_t = client.gets.strip
+			client.puts(c_t + '/' + Time.now.strftime("%H%M%S.%L") + '/' + t.to_s + '/' + t_time.strftime("%H%M%S.%L"))
 
-p "Connected."
-loop do
-	c_t = client.gets.strip
-	client.puts(c_t + '/' + Time.now.strftime("%H%M%S.%L") + '/' + t.to_s + '/' + t_time.strftime("%H%M%S.%L"))
-
+		end
+	end
 end
+
+threads.each{|tt|tt.join}
+
